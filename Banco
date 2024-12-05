@@ -1,0 +1,240 @@
+DROP TABLE IF EXISTS detalhes_pedidos CASCADE;
+DROP TABLE IF EXISTS carrinhos CASCADE;
+DROP TABLE IF EXISTS mesas_pedidos CASCADE;
+DROP TABLE IF EXISTS pedidos CASCADE;
+DROP TABLE IF EXISTS produtos_ingredientes CASCADE;
+DROP TABLE IF EXISTS mesas CASCADE;
+DROP TABLE IF EXISTS produtos CASCADE;
+DROP TABLE IF EXISTS ingredientes CASCADE;
+DROP TABLE IF EXISTS clientes CASCADE;
+DROP TABLE IF EXISTS funcionarios CASCADE;
+drop table if exists carrinhos_ingredientes cascade;
+
+create table clientes(
+	id_cliente serial primary key,
+	nome_cliente varchar(100) not null,
+	usuario varchar(100) not null,
+	senha varchar(50) not null,
+	cpf char(11) not null,
+	telefone varchar(14) not null,
+	endereco text not null
+);
+
+create table funcionarios(
+	id_funcionario serial primary key,
+	nome_funcionario varchar(100) not null,
+	usuario varchar(100) not null,
+	senha varchar(50) not null,
+	cpf char(11) not null,
+	telefone varchar(14) not null,
+	endereco text not null
+);
+
+create table ingredientes(
+	id_ingrediente serial primary key,
+	estoque int not null,
+	nome_ingrediente varchar(100) not null
+);
+
+create table produtos(
+	id_produto serial primary key,
+	estoque int not null, 
+	preco numeric not null,
+	nome_produto varchar(100) not null
+);
+
+create table produtos_ingredientes(
+    id_produto_ingrediente serial primary key,
+    id_ingrediente int references ingredientes(id_ingrediente),
+    quantidade int not null,
+    id_produto int references produtos(id_produto)
+);
+
+create table mesas(
+	id_mesa serial primary key,
+	numero int not null
+);
+
+create table pedidos(
+	id_pedido serial primary key,
+	id_cliente int references clientes(id_cliente),
+	id_funcionario int references funcionarios(id_funcionario),
+	tipo char(1) not null,
+	total numeric not null,
+	data_pedido date
+);
+
+create table carrinhos(
+	id_carrinho serial primary key,
+	id_cliente int references clientes(id_cliente),
+	id_funcionario int references funcionarios(id_funcionario),
+	id_produto int references produtos(id_produto),
+	quantidade int not null,
+	preco numeric not null,
+	total numeric not null
+);
+
+create table detalhes_pedidos(
+	id_detalhe_pedido serial primary key,
+	id_pedido int references pedidos(id_pedido),
+	id_produto int references produtos(id_produto),
+	quantidade int not null,
+	preco numeric not null,
+	total numeric not null
+);
+
+create table carrinhos_ingredientes(
+	id_ingrediente int references ingredientes(id_ingrediente),
+	estoque int not null,
+	nome_ingrediente varchar(100) not null
+);
+
+create table mesas_pedidos (
+	id_mesa_pedido serial primary key,
+	id_mesa int references mesas(id_mesa),
+	id_pedido int references pedidos(id_pedido),
+	status char(2)
+);
+
+insert
+	into clientes(nome_cliente,
+	usuario,
+	senha,
+	cpf,
+	telefone,
+	endereco)
+values
+	('José Caio','j_caio','Kl6pPdMLSwtiAWpPMhM7iy5I44Xv5tLr0B0YK5QMNwA=','12345678900','21987524321','Rua das Palmeiras Encantadas'),
+	('Isabela Soares','isabelasr','npiZiZEVjBzfnDIzQPrqpqphn7oWOrvBfpHMyBbP+4U=','98765432111','219812654321','Avenida Sol Nascente'),
+	('a','a','FOO3LsZl3R6WXVKRyVEU0rSUBUIXvcW22DodSSGd3gY=','98765432111','219812654321','Avenida Sol Nascente');
+
+insert
+	into funcionarios(nome_funcionario,
+	usuario,
+	senha,
+	cpf,
+	telefone,
+	endereco)
+values
+	('admin', 'admin', 'Riu4bIALQ5QqqlOhqwNfMTYF4xl0BN8z9i4OdFzuAGg=', '00000000000', '00000000', '0'),
+	('Thiago Novaes', 'titimoral', 'J0UUEQioZ3bV3Wf28hoWT5IR1IKfqQ6ZBxd3m6AJqTk=', '32154386721', '8291332244', 'aldebaram'),
+	('Lucas Almeida', 'lucas.almeida92', 'yJbHG9JdIKQltIXDz+SUKCKSDAzn0CI009grN5HeXDo=', '31265431232', '8282738821', 'rua 13');
+
+insert
+	into ingredientes(estoque,
+	nome_ingrediente)
+values
+	('16', 'Pão'),
+	('35', 'Alface'),
+	('16', 'Hamburguer'),
+	('8', 'Picles'),
+	('11', 'Tomate'),
+	('14', 'Queijo'),
+	('13', 'Laranja'),
+	('7', 'Polpa de Morango'),
+	('9', 'Beterraba'),
+	('12', 'Cebola');
+
+insert
+	into carrinhos_ingredientes(estoque, id_ingrediente,
+	nome_ingrediente)
+values
+	('16',1 ,'Pão'),
+	('35',2 ,'Alface'),
+	('16',3 ,'Hamburguer'),
+	('8',4 ,'Picles'),
+	('11',5, 'Tomate'),
+	('14',6 ,'Queijo'),
+	('13',7 ,'Laranja'),
+	('7',8 ,'Polpa de Morango'),
+	('9',9 ,'Beterraba'),
+	('12',10 ,'Cebola');
+
+insert
+	into produtos(estoque,
+	preco,
+	nome_produto)
+values
+	('5', 10.00, 'Pastel de Queijo'),
+	('4', 8.00, 'Coxinha'),
+	('0', 6.50, 'Misto'),
+	('0', 15.20, 'Hambuguer'),
+	('3', 12.82, 'Guaraná Antartica 2L'),
+	('6', 3.70, 'Coca-Cola Lata 350 ml');
+
+insert 
+	into produtos_ingredientes(id_ingrediente, 
+	quantidade, 
+	id_produto)
+values
+	(6, 2, 3),
+	(1, 2, 3);
+	
+insert
+	into produtos_ingredientes(id_ingrediente,
+	quantidade,
+	id_produto)
+values
+	(5, 2, 4),
+	(4, 1, 4),
+	(1, 2, 4),
+	(6, 2, 4),
+	(2, 2, 4),
+	(10, 2, 4),
+	(3, 1, 4);
+
+
+insert
+	into mesas(numero)
+values
+	(1);
+
+insert
+	into pedidos(id_cliente,
+	total,
+	tipo)
+values
+	(1, '60', 'E');
+
+insert
+	into pedidos(id_funcionario,
+	total,
+	tipo)
+values
+	(2, '30.5', 'P');
+
+insert
+	into detalhes_pedidos(id_pedido,
+	preco,
+	total,
+	id_produto,
+	quantidade)
+values
+	(1, '10', '60', '1', '6');	
+
+insert
+	into detalhes_pedidos(id_pedido,
+	preco,
+	total,
+	id_produto,
+	quantidade)
+values
+	(2, '8', '24', '2', '3'),
+	(2, '6.5', '30.5', '3', '1');
+
+insert
+	into mesas_pedidos(id_mesa,
+	id_pedido,
+	status)
+values
+	(1, 1, 'AP');
+
+insert
+	into mesas_pedidos(id_pedido,
+	status)
+values
+	(2, 'AP');
+
+SELECT id_produto FROM piramide.carrinhos WHERE id_cliente = 1 ORDER BY id_carrinho DESC LIMIT 1
+
+
